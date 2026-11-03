@@ -11,15 +11,16 @@
 
 Control Bluetooth SIG Mesh lights and plugs from Home Assistant. Everything runs locally: there is no vendor hub, no cloud and no account. By Arena of Innovation.
 
-<img alt="Turning a Bluetooth SIG Mesh bulb on, dimming it and changing its colour temperature from Home Assistant" src="raw.githubusercontent.com/gitagogaming/…/demo.gif" width="600">
+<img alt="Turning a Bluetooth SIG Mesh bulb on, dimming it and changing its colour temperature from Home Assistant" src="https://raw.githubusercontent.com/pratikthorat/ha-aoi-sig-mesh/d9babd701c2f0e3245ea758d7d6da7194c0fe802/docs/demo.gif" width="600">
 
 - **On/off plugs** (Generic OnOff) become switches.
 - **Dimmable lights** (Light Lightness) become lights with brightness and transitions.
 - **Tunable-white lights** (Light CTL) also get colour temperature, within the range the light reports.
+- **RGB lights** with the Bluetooth Mesh Light HSL model support hue and saturation control.
 - **One Bluetooth connection serves the whole network.** Commands to any device go through whichever mesh device is in range (a "proxy").
 - **Devices report their own changes.** A change made at the device itself shows up in Home Assistant.
 
-**Not in this version:** colour (RGB) lights, mesh groups and scenes (use Home Assistant groups instead), battery sensors and remotes, devices that need an OOB code to pair, more than one key per network, and Telink's proprietary mesh.
+**Not in this version:** mesh groups and scenes (use Home Assistant groups instead), battery sensors and remotes, devices that need an OOB code to pair, more than one key per network, and Telink's proprietary mesh.
 
 ## Install
 
