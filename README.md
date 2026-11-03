@@ -16,7 +16,7 @@ Control Bluetooth SIG Mesh lights and plugs from Home Assistant. Everything runs
 - **On/off plugs** (Generic OnOff) become switches.
 - **Dimmable lights** (Light Lightness) become lights with brightness and transitions.
 - **Tunable-white lights** (Light CTL) also get colour temperature, within the range the light reports.
-- **RGB lights** with the Bluetooth Mesh Light HSL model support hue and saturation control.
+- **RGB lights** with the Bluetooth Mesh Light HSL model support hue and saturation control. _(note: tested lights did not show proper color until brightness was below 60%)_
 - **One Bluetooth connection serves the whole network.** Commands to any device go through whichever mesh device is in range (a "proxy").
 - **Devices report their own changes.** A change made at the device itself shows up in Home Assistant.
 
