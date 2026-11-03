@@ -5,6 +5,7 @@
     height="96"
   />
 </picture>
+
 # AoI Bluetooth SIG Mesh
 
 [![Release](https://img.shields.io/github/v/release/gitagogaming/ha-aoi-sig-mesh)](https://github.com/gitagogaming/ha-aoi-sig-mesh/releases)
