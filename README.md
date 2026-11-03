@@ -1,6 +1,10 @@
-![AoI Bluetooth SIG Mesh](https://raw.githubusercontent.com/pratikthorat/ha-aoi-sig-mesh/main/custom_components/aoi_sig_mesh/brand/logo@2x.png#gh-light-mode-only)
-![AoI Bluetooth SIG Mesh](https://raw.githubusercontent.com/pratikthorat/ha-aoi-sig-mesh/main/custom_components/aoi_sig_mesh/brand/dark_logo@2x.png#gh-dark-mode-only)
-
+<picture>
+  <img
+    src="https://raw.githubusercontent.com/gitagogaming/ha-aoi-sig-mesh/main/custom_components/aoi_sig_mesh/brand/outlined_logo@2x.png"
+    alt="AoI Bluetooth SIG Mesh"
+    height="96"
+  />
+</picture>
 # AoI Bluetooth SIG Mesh
 
 [![Release](https://img.shields.io/github/v/release/gitagogaming/ha-aoi-sig-mesh)](https://github.com/gitagogaming/ha-aoi-sig-mesh/releases)
@@ -16,7 +20,7 @@ Control Bluetooth SIG Mesh lights and plugs from Home Assistant. Everything runs
 - **On/off plugs** (Generic OnOff) become switches.
 - **Dimmable lights** (Light Lightness) become lights with brightness and transitions.
 - **Tunable-white lights** (Light CTL) also get colour temperature, within the range the light reports.
-- **RGB lights** with the Bluetooth Mesh Light HSL model support hue and saturation control. _(note: tested lights did not show proper color until brightness was below 60%)_
+- **RGB lights** with the Bluetooth Mesh Light HSL model support hue and saturation control. _(note: tested lights did not show "full" color until brightness was below 60%)_
 - **One Bluetooth connection serves the whole network.** Commands to any device go through whichever mesh device is in range (a "proxy").
 - **Devices report their own changes.** A change made at the device itself shows up in Home Assistant.
 
