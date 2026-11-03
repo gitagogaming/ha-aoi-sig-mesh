@@ -1,14 +1,5 @@
-<picture>
-  <source
-    media="(prefers-color-scheme: dark)"
-    srcset="https://raw.githubusercontent.com/gitagogaming/ha-aoi-sig-mesh/main/custom_components/aoi_sig_mesh/brand/dark_logo@2x.png"
-  />
-  <img
-    src="https://raw.githubusercontent.com/gitagogaming/ha-aoi-sig-mesh/main/custom_components/aoi_sig_mesh/brand/logo@2x.png"
-    alt="AoI Bluetooth SIG Mesh"
-    height="96"
-  />
-</picture>
+![AoI Bluetooth SIG Mesh](https://raw.githubusercontent.com/pratikthorat/ha-aoi-sig-mesh/main/custom_components/aoi_sig_mesh/brand/logo@2x.png#gh-light-mode-only)
+![AoI Bluetooth SIG Mesh](https://raw.githubusercontent.com/pratikthorat/ha-aoi-sig-mesh/main/custom_components/aoi_sig_mesh/brand/dark_logo@2x.png#gh-dark-mode-only)
 
 # AoI Bluetooth SIG Mesh
 
