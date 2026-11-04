@@ -65,11 +65,13 @@ def _level(present: int, target: int | None) -> int:
     return present if target is None else target
 
 
-def _apply_lightness(state: NodeState, lightness: int) -> None:
+def _apply_lightness(state: NodeState, lightness: int, *, update_power: bool = True) -> None:
     if lightness == 0:
-        state.on = False
+        if update_power:
+            state.on = False
     else:
-        state.on = True
+        if update_power:
+            state.on = True
         state.lightness = lightness
 
 
@@ -93,11 +95,14 @@ def status_is_for(node: MeshNode, message: AccessMessage) -> bool:
     return role is None or node.models.get(role, node.unicast) == message.src
 
 
-def apply_status(state: NodeState, message: AccessMessage) -> StatusUpdate | None:
+def apply_status(
+    state: NodeState, message: AccessMessage, *, onoff_authoritative: bool = False
+) -> StatusUpdate | None:
     """Fold one status message into ``state``. Returns None for anything that is not a status.
 
     During a transition the target value wins, so the UI shows where the node is heading.
-    Lightness 0 means off; the last non-zero lightness is kept for the next turn-on.
+    Lightness 0 means off when no authoritative OnOff model is available; the last non-zero
+    lightness is kept for the next turn-on.
     """
     try:
         if message.opcode == OP_ONOFF_STATUS:
@@ -106,11 +111,17 @@ def apply_status(state: NodeState, message: AccessMessage) -> StatusUpdate | Non
             return StatusUpdate(onoff.remaining_ms)
         if message.opcode == OP_LIGHTNESS_STATUS:
             light = parse_lightness_status(message.params)
-            _apply_lightness(state, _level(light.present, light.target))
+            _apply_lightness(
+                state, _level(light.present, light.target), update_power=not onoff_authoritative
+            )
             return StatusUpdate(light.remaining_ms)
         if message.opcode == OP_CTL_STATUS:
             ctl = parse_ctl_status(message.params)
-            _apply_lightness(state, _level(ctl.present_lightness, ctl.target_lightness))
+            _apply_lightness(
+                state,
+                _level(ctl.present_lightness, ctl.target_lightness),
+                update_power=not onoff_authoritative,
+            )
             state.kelvin = _level(ctl.present_kelvin, ctl.target_kelvin)
             return StatusUpdate(ctl.remaining_ms)
         if message.opcode == OP_CTL_TEMP_STATUS:
@@ -119,7 +130,11 @@ def apply_status(state: NodeState, message: AccessMessage) -> StatusUpdate | Non
             return StatusUpdate(temp.remaining_ms)
         if message.opcode == OP_HSL_STATUS:
             hsl = parse_hsl_status(message.params)
-            _apply_lightness(state, _level(hsl.present_lightness, hsl.target_lightness))
+            _apply_lightness(
+                state,
+                _level(hsl.present_lightness, hsl.target_lightness),
+                update_power=not onoff_authoritative,
+            )
             state.hue = _level(hsl.present_hue, hsl.target_hue)
             state.saturation = _level(hsl.present_saturation, hsl.target_saturation)
             return StatusUpdate(hsl.remaining_ms)
@@ -325,3 +340,4 @@ class NodeCommands:
                 with contextlib.suppress(Exception):
                     tid = self._tids.next(address)
                     await self._link.send(address, onoff_set(currently_on, tid, ack=False))
+
