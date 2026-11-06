@@ -34,7 +34,15 @@ from .models import (
     parse_lightness_status,
     parse_onoff_status,
 )
-from .node import ROLE_CTL, ROLE_CTL_TEMP, ROLE_HEALTH, ROLE_HSL, ROLE_LIGHTNESS, ROLE_ONOFF, MeshNode
+from .node import (
+    ROLE_CTL,
+    ROLE_CTL_TEMP,
+    ROLE_HEALTH,
+    ROLE_HSL,
+    ROLE_LIGHTNESS,
+    ROLE_ONOFF,
+    MeshNode,
+)
 from .proxy import AccessMessage, ProxyLink
 from .quirks import Quirk
 
@@ -340,4 +348,3 @@ class NodeCommands:
                 with contextlib.suppress(Exception):
                     tid = self._tids.next(address)
                     await self._link.send(address, onoff_set(currently_on, tid, ack=False))
-

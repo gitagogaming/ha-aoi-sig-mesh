@@ -33,7 +33,15 @@ from .models import (
     parse_ctl_temperature_range_status,
 )
 from .network import MeshNetwork
-from .node import ROLE_CTL, ROLE_CTL_TEMP, ROLE_HEALTH, ROLE_HSL, ROLE_LIGHTNESS, ROLE_ONOFF, MeshNode
+from .node import (
+    ROLE_CTL,
+    ROLE_CTL_TEMP,
+    ROLE_HEALTH,
+    ROLE_HSL,
+    ROLE_LIGHTNESS,
+    ROLE_ONOFF,
+    MeshNode,
+)
 from .proxy import ProxyLink
 
 _LOGGER = logging.getLogger(__name__)
