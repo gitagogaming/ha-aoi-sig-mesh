@@ -1,6 +1,6 @@
 <picture>
   <img
-    src="https://raw.githubusercontent.com/gitagogaming/ha-aoi-sig-mesh/main/custom_components/aoi_sig_mesh/brand/outlined_logo@2x.png"
+    src="https://raw.githubusercontent.com/pratikthorat/ha-aoi-sig-mesh/main/custom_components/aoi_sig_mesh/brand/outlined_logo@2x.png"
     alt="AoI Bluetooth SIG Mesh"
     height="96"
   />
