@@ -123,6 +123,8 @@ The mesh code is checked against the sample data in the Bluetooth Mesh specifica
 | What | Status |
 |---|---|
 | Tuya tunable-white bulb, moved from Tuya BLE Mesh | works: on/off, brightness, colour temperature |
+| Tuya RGB Bluetooth mesh lights (sold as Otdair) | works: on/off, brightness, hue and saturation |
+| AiDot solar-powered spotlights | works: LED control and power on/off |
 | On/off plugs | untested on hardware: reports welcome |
 | Adding a factory-reset device | untested on hardware: reports welcome |
 | nRF Mesh import | untested on hardware: reports welcome |
