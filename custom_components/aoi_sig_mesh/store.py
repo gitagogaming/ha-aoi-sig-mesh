@@ -36,7 +36,11 @@ class _StrictStore(Store[dict[str, Any]]):
             "data": data,
         }
         async with self._write_lock:
-            self._manager.async_invalidate(self.key)
+            # Only invalidate if we have a manager, HA Core 11.1 and later does not
+            manager = getattr(self, "_manager", None)
+            if manager is not None:
+                manager.async_invalidate(self.key)
+                
             await self._async_write_data(envelope)
             # Like Store._async_handle_write_data: no held payload may outlive a write, or the
             # next async_load on this instance returns it instead of what is on disk.
