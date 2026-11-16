@@ -21,10 +21,13 @@ CID_TUYA = 0x07D0
 #   so we must send an OnOff ON first before setting the lightness.
 CID_AIDOT = 0x0504
 AIDOT_SOLAR_SPOTLIGHTS_SL5C = (CID_AIDOT, 0x6212)
+SENGLED_RGB_CID_PID = (0x08B4, 0x0008)
 
 QUIRKS: dict[tuple[int, int | None], Quirk] = {
     (CID_TUYA, None): Quirk.OFF_VIA_ONOFF | Quirk.ON_BEFORE_SET | Quirk.IGNORE_VENDOR_OPCODES,
     AIDOT_SOLAR_SPOTLIGHTS_SL5C: Quirk.OFF_VIA_ONOFF,
+    # Sengled RGB lights dim to minimum on Lightness 0 instead of switching off.
+    SENGLED_RGB_CID_PID: Quirk.OFF_VIA_ONOFF,
 }
 
 VENDOR_OPCODE_MIN = 0xC00000
