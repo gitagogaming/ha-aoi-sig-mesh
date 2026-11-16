@@ -82,7 +82,10 @@ class AoiLight(AoiNodeEntity, LightEntity):
 
     @property
     def brightness(self) -> int | None:
-        if ColorMode.ONOFF in self._attr_supported_color_modes or self.record.state.lightness is None:
+        if (
+            ColorMode.ONOFF in self._attr_supported_color_modes
+            or self.record.state.lightness is None
+        ):
             return None
         return lightness_to_brightness(self.record.state.lightness)
 
