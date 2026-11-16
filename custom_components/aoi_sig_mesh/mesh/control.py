@@ -14,16 +14,16 @@ from .errors import LinkClosedError, MalformedPDUError, MeshError, MeshTimeout, 
 from .models import (
     OP_CTL_STATUS,
     OP_CTL_TEMP_STATUS,
-    OP_HEALTH_ATTENTION_STATUS,
     OP_HSL_STATUS,
+    OP_HEALTH_ATTENTION_STATUS,
     OP_LIGHTNESS_STATUS,
     OP_ONOFF_STATUS,
     ctl_get,
     ctl_set,
     ctl_temperature_set,
-    health_attention_set,
     hsl_get,
     hsl_set,
+    health_attention_set,
     lightness_get,
     lightness_set,
     onoff_get,
@@ -34,22 +34,14 @@ from .models import (
     parse_lightness_status,
     parse_onoff_status,
 )
-from .node import (
-    ROLE_CTL,
-    ROLE_CTL_TEMP,
-    ROLE_HEALTH,
-    ROLE_HSL,
-    ROLE_LIGHTNESS,
-    ROLE_ONOFF,
-    MeshNode,
-)
+from .node import ROLE_CTL, ROLE_CTL_TEMP, ROLE_HEALTH, ROLE_HSL, ROLE_LIGHTNESS, ROLE_ONOFF, MeshNode
 from .proxy import AccessMessage, ProxyLink
 from .quirks import Quirk
 
 ATTENTION_SECONDS = 5
 ATTENTION_TIMEOUT = 1.0  # per attempt, two attempts: identify falls back to a blink quickly
 BLINKS = 3
-BLINK_INTERVAL = 0.4  # read at call time, so tests can shorten it
+BLINK_INTERVAL = 1.0  # read at call time, so tests can shorten it
 TID_WINDOW = 6.0  # seconds: a repeated src+dst+TID inside it is a retransmission
 
 
@@ -312,29 +304,23 @@ class NodeCommands:
         )
 
     async def identify(self, *, currently_on: bool) -> None:
-        """Health Attention if the node answers it; lights blink three times instead.
+        """Blink lights three times; use Health Attention for plugs.
 
-        Attention is AppKey-secured, so a node whose Health Server is not bound drops it
-        silently: the acknowledged Set tells us whether it landed. Plugs never blink, since
-        toggling one could switch off whatever is plugged in.
+        A Health Attention acknowledgment does not guarantee a visible indication, so lights
+        use Generic OnOff directly. Plugs never blink, since toggling one could switch off
+        whatever is plugged in.
         """
-        if ROLE_HEALTH in self._node.models:
-            try:
-                await self._link.request(
-                    self._node.models[ROLE_HEALTH],
-                    health_attention_set(ATTENTION_SECONDS, ack=True),
-                    OP_HEALTH_ATTENTION_STATUS,
-                    timeout=ATTENTION_TIMEOUT,
-                    attempts=2,
-                )
-                return
-            except (LinkClosedError, SeqNotSaved):
-                raise  # no link (or no seq) to blink with either
-            except MeshError:
-                if not self._node.is_light:
-                    raise
-        elif not self._node.is_light:
-            raise ValueError("identify needs Health Attention on a plug")
+        if not self._node.is_light:
+            if ROLE_HEALTH not in self._node.models:
+                raise ValueError("identify needs Health Attention on a plug")
+            await self._link.request(
+                self._node.models[ROLE_HEALTH],
+                health_attention_set(ATTENTION_SECONDS, ack=True),
+                OP_HEALTH_ATTENTION_STATUS,
+                timeout=ATTENTION_TIMEOUT,
+                attempts=2,
+            )
+            return
         address = self._address(ROLE_ONOFF)
         on = currently_on
         try:
@@ -348,3 +334,4 @@ class NodeCommands:
                 with contextlib.suppress(Exception):
                     tid = self._tids.next(address)
                     await self._link.send(address, onoff_set(currently_on, tid, ack=False))
+

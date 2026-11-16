@@ -82,10 +82,7 @@ class AoiLight(AoiNodeEntity, LightEntity):
 
     @property
     def brightness(self) -> int | None:
-        if (
-            ColorMode.ONOFF in self._attr_supported_color_modes
-            or self.record.state.lightness is None
-        ):
+        if ColorMode.ONOFF in self._attr_supported_color_modes or self.record.state.lightness is None:
             return None
         return lightness_to_brightness(self.record.state.lightness)
 
@@ -107,16 +104,23 @@ class AoiLight(AoiNodeEntity, LightEntity):
     async def async_turn_on(self, **kwargs: Any) -> None:
         brightness = kwargs.get(ATTR_BRIGHTNESS)
         hs_color = kwargs.get(ATTR_HS_COLOR)
+        kelvin = kwargs.get(ATTR_COLOR_TEMP_KELVIN)
         if ATTR_COLOR_TEMP_KELVIN in kwargs:
             self._color_mode = ColorMode.COLOR_TEMP
         elif hs_color is not None:
             self._color_mode = ColorMode.HS
+        elif brightness is not None:
+            if self._color_mode == ColorMode.HS:
+                hs_color = self.hs_color
+            elif self._color_mode == ColorMode.COLOR_TEMP:
+                kelvin = self.record.state.kelvin
         await self.coordinator.async_turn_on(
             self.record.subentry_id,
             lightness=None if brightness is None else brightness_to_lightness(brightness),
-            kelvin=kwargs.get(ATTR_COLOR_TEMP_KELVIN),
+            kelvin=kelvin,
             hue=None if hs_color is None else round(hs_color[0] * 65535 / 360) % 65536,
             saturation=None if hs_color is None else round(hs_color[1] * 65535 / 100),
+            preserve_hsl_color=self._color_mode == ColorMode.HS,
             transition_ms=transition_ms(kwargs),
         )
 
