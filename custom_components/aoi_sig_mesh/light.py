@@ -21,6 +21,7 @@ from .const import ROLE_LIGHT
 from .coordinator import MeshCoordinator, NodeRecord
 from .entity import AoiNodeEntity
 from .mesh.node import ROLE_LIGHTNESS
+from .mesh.quirks import SENGLED_RGB_CID_PID
 
 LIGHTNESS_MAX = 0xFFFF
 
@@ -73,6 +74,12 @@ class AoiLight(AoiNodeEntity, LightEntity):
         self._color_mode = ColorMode.HS if node.is_color else next(iter(modes))
 
     @property
+    def _sengled_rgb(self) -> bool:
+        """The two tested Sengled CID/PID lights mix white into HSL above 50%."""
+        node = self.record.node
+        return node.is_color and (node.cid, node.pid) == SENGLED_RGB_CID_PID
+
+    @property
     def color_mode(self) -> ColorMode:
         return self._color_mode
 
@@ -87,6 +94,8 @@ class AoiLight(AoiNodeEntity, LightEntity):
             or self.record.state.lightness is None
         ):
             return None
+        if self._sengled_rgb and self._color_mode == ColorMode.HS:
+            return max(1, min(255, round(self.record.state.lightness * 255 / 32767)))
         return lightness_to_brightness(self.record.state.lightness)
 
     @property
@@ -112,6 +121,23 @@ class AoiLight(AoiNodeEntity, LightEntity):
             self._color_mode = ColorMode.COLOR_TEMP
         elif hs_color is not None:
             self._color_mode = ColorMode.HS
+        # Sengled CID 0x08B4/PID 0x0008 maps RGB brightness into the
+        # vivid HSL half-range. CTL/white and other devices are unchanged.
+        sengled_hs = self._sengled_rgb and self._color_mode == ColorMode.HS
+        if brightness is not None:
+            mesh_lightness = (
+                round(max(0, min(255, brightness)) * 32767 / 255)
+                if sengled_hs
+                else brightness_to_lightness(brightness)
+            )
+        elif hs_color is not None and sengled_hs:
+            mesh_lightness = min(self.record.state.lightness or 32767, 32767)
+        else:
+            mesh_lightness = None
+        await self.coordinator.async_turn_on(
+            self.record.subentry_id,
+            lightness=mesh_lightness,
+            kelvin=kwargs.get(ATTR_COLOR_TEMP_KELVIN),
         elif brightness is not None:
             if self._color_mode == ColorMode.HS:
                 hs_color = self.hs_color
