@@ -44,6 +44,7 @@ OP_HSL_GET = 0x826D
 OP_HSL_SET = 0x8276
 OP_HSL_SET_UNACK = 0x8277
 OP_HSL_STATUS = 0x8278
+OP_HSL_TARGET_STATUS = 0x8279
 
 KELVIN_MIN = 800
 KELVIN_MAX = 20000
@@ -330,9 +331,9 @@ def parse_hsl_status(params: bytes) -> HSLStatus:
     if len(params) == 6:
         lightness, hue, saturation = struct.unpack("<HHH", params)
         return HSLStatus(lightness, hue, saturation, None, None, None, None)
-    if len(params) == 13:
-        values = struct.unpack("<HHHHHHB", params)
-        return HSLStatus(*values[:3], *values[3:6], decode_transition(values[6]))
+    if len(params) == 7:
+        lightness, hue, saturation, remaining = struct.unpack("<HHHB", params)
+        return HSLStatus(lightness, hue, saturation, None, None, None, decode_transition(remaining))
     raise _bad_length("Light HSL Status", params)
 
 

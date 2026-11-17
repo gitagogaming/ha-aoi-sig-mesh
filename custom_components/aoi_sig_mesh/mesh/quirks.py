@@ -14,11 +14,8 @@ class Quirk(enum.Flag):
 
 CID_TUYA = 0x07D0
 
-# The tested AiDot solar spotlights (SL5C) have a quirk:
-#   They will 'dim' the light rather than turn it off under normal operation.
-#   The only way to turn them off is to send a Generic OnOff OFF message.
-#   They also seem to ignore Lightness Set messages when the light is off
-#   so we must send an OnOff ON first before setting the lightness.
+# AiDot SL5C quirk: Generic OnOff OFF is required to turn off the light.
+# Lightness Set is ignored while off, so send OnOff ON first.
 CID_AIDOT = 0x0504
 AIDOT_SOLAR_SPOTLIGHTS_SL5C = (CID_AIDOT, 0x6212)
 SENGLED_RGB_CID_PID = (0x08B4, 0x0008)

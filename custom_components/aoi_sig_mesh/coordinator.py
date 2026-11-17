@@ -967,6 +967,7 @@ class MeshCoordinator:
         kelvin: int | None = None,
         hue: int | None = None,
         saturation: int | None = None,
+        preserve_hsl_color: bool = False,
         transition_ms: int | None = None,
     ) -> None:
         record = self.nodes[subentry_id]
@@ -978,6 +979,7 @@ class MeshCoordinator:
             lightness is not None
             and kelvin is None
             and ROLE_HSL in record.node.models
+            and preserve_hsl_color
             and hue is None
         ):
             if record.state.hue is not None and record.state.saturation is not None:
